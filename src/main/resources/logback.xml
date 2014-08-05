@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true"  scanPeriod="30 seconds">
+  <jmxConfigurator/>
+
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>[%d{ISO8601}] %-6r %-5p [%t] %c.%M[%L] - %m%n</Pattern>
+    </encoder>
+  </appender>
+
+  <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+    <discriminator class="vj.akka.test.ActorDomainBasedDiscriminator"/>
+    <sift>
+		  <appender name="File-${actorDomain}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+		    <ImmediateFlush>false</ImmediateFlush>
+		    <File>/Users/Vishal/temp/akka-test-${actorDomain}.log</File>
+		    <layout class="ch.qos.logback.classic.PatternLayout">
+		      <Pattern>[%d{ISO8601}] %-6r %-5p [%t] %c.%M[%L] - %m%n</Pattern>
+		      <!-- <Pattern>%d{ISO8601},%m%n</Pattern>  -->
+		    </layout>
+		    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+		      <maxIndex>10</maxIndex>
+		      <FileNamePattern>/Users/Vishal/temp/akka-test-${actorDomain}.log.%i</FileNamePattern>
+		    </rollingPolicy>
+		    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+		      <MaxFileSize>100MB</MaxFileSize>
+		    </triggeringPolicy>
+		  </appender>
+    </sift>
+  </appender>
+
+  <!-- Each logger level  -->
+  <root level="DEBUG">
+    <appender-ref ref="SIFT"/>
+  </root>
+
+  <logger name="vj.akka" level="DEBUG"/>
+  <logger name="Domain1" level="DEBUG"/>
+  <logger name="Domain2" level="DEBUG"/>
+  
+</configuration>
